@@ -21,10 +21,13 @@ import java.util.Map;
 public class AccountController {
     private final JwtUtil jwtUtil;
 
-    @PostMapping("login2")
+    @PostMapping("login")
     public ResponseEntity<String> login(@RequestBody LoginRequest loginRequest) {
+        // TODO: 서비스로 로직 이동
         Map<String, Object> claims = new HashMap<>();
-        claims.put("username", loginRequest.getUsername());
+        claims.put("name", loginRequest.username());
+        claims.put("nickname", "nickname");
+        claims.put("role", "MANAGER");
 
         String token = jwtUtil.generateToken(claims, 1);
 

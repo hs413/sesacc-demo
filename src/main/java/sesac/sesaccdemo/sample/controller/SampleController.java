@@ -7,11 +7,13 @@ import org.springframework.web.bind.annotation.RestController;
 import sesac.sesaccdemo.common.exception.BaseException;
 import sesac.sesaccdemo.common.exception.ErrorCode;
 
+import java.security.Principal;
+
 @RestController
 @Slf4j
 public class SampleController {
     @GetMapping
-    public String hello(Authentication authentication) {
+    public String hello(Principal authentication) {
         log.info("hello, {}", ErrorCode.INTERNAL_SERVER_ERROR.getStatus());
         log.info("hello, {}", ErrorCode.INTERNAL_SERVER_ERROR.getMessage());
         log.info("hello, {}", ErrorCode.INVALID.getMessage());
