@@ -17,6 +17,8 @@ import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
 import sesac.sesaccdemo.auth.filter.AccessTokenFilter;
+import sesac.sesaccdemo.auth.handler.CustomAccessDeniedHandler;
+import sesac.sesaccdemo.auth.handler.CustomAuthenticationEntryPoint;
 
 import java.util.Arrays;
 
@@ -26,14 +28,14 @@ import java.util.Arrays;
 @Slf4j
 public class SecurityConfig {
     private final AccessTokenFilter accessTokenFilter;
-
+    private final CustomAccessDeniedHandler customAccessDeniedHandler;
+    private final CustomAuthenticationEntryPoint customAuthenticationEntryPoint;
     @Value("${origins}")
     private String origins;
 
     @Bean
     public SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
-        http
-                .csrf(AbstractHttpConfigurer::disable)
+        http.csrf(AbstractHttpConfigurer::disable)
                 .cors(cors -> cors.configurationSource(corsConfigurationSource()))
                 .formLogin(AbstractHttpConfigurer::disable)
                 .httpBasic(AbstractHttpConfigurer::disable)
@@ -42,13 +44,13 @@ public class SecurityConfig {
         http.authorizeHttpRequests(requests -> requests
                 .requestMatchers("/accounts/**").permitAll()
                 .requestMatchers("/manager/**").hasRole("MANAGER")
-                .anyRequest().authenticated()
-        );
+                .anyRequest().authenticated());
 
-        http.addFilterBefore(
-                accessTokenFilter,
-                UsernamePasswordAuthenticationFilter.class
-        );
+        http.exceptionHandling(handler -> handler
+                .accessDeniedHandler(customAccessDeniedHandler)
+                .authenticationEntryPoint(customAuthenticationEntryPoint));
+
+        http.addFilterBefore(accessTokenFilter, UsernamePasswordAuthenticationFilter.class);
 
 //        http.addFilterBefore(new RefreshTokenFilter("/refreshToken", jwtUtil),
 //                TokenCheckFilter.class);
