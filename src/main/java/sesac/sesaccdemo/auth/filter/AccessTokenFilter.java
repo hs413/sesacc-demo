@@ -10,12 +10,20 @@ import jakarta.servlet.http.HttpServletResponse;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.context.annotation.Bean;
+import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.web.authentication.WebAuthenticationDetailsSource;
 import org.springframework.stereotype.Component;
+import org.springframework.util.StringUtils;
 import org.springframework.web.filter.OncePerRequestFilter;
 import sesac.sesaccdemo.auth.exception.AccessTokenException;
 import sesac.sesaccdemo.auth.util.JwtUtil;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 @Slf4j
@@ -30,64 +38,69 @@ public class AccessTokenFilter extends OncePerRequestFilter {
     protected void doFilterInternal(HttpServletRequest request,
                                     HttpServletResponse response,
                                     FilterChain filterChain) throws ServletException, IOException {
-//        var path = request.getRequestURI();
-//
-//        if (path.equals(passPath)) {
-//            filterChain.doFilter(request, response);
-//            return;
-//        }
+        String requestURI = request.getRequestURI();
 
-        try {
-            Map<String, Object> claim = validateAccessToken(request);
-//            saveClaimToAuthentication(claim, request);
+        if (requestURI.startsWith("/accounts")) {
             filterChain.doFilter(request, response);
-        } catch (AccessTokenException accessTokenException) {
-//            accessTokenException.sendResponseError(response);
+            return;
         }
+
+        String token = extractToken(request);
+
+        // TODO: 수정필요
+        if (token != null)  {
+            Map<String, Object> claim = jwtUtil.validateToken(token);
+            Long userId = (Long) claim.get("id");
+
+            List<GrantedAuthority> authorities = new ArrayList<>();
+            authorities.add(new SimpleGrantedAuthority("ROLE_MANAGER"));
+
+            UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(claim, null, authorities);
+            authentication.setDetails(new WebAuthenticationDetailsSource().buildDetails(request));
+
+            SecurityContextHolder.getContext().setAuthentication(authentication);
+            log.info("Access token: {}", SecurityContextHolder.getContext().getAuthentication());
+        }
+
+        filterChain.doFilter(request, response);
     }
 
-    private Map<String, Object> validateAccessToken(HttpServletRequest request) throws AccessTokenException {
-        String headerStr = request.getHeader("Authorization");
-
-        if (headerStr == null || headerStr.length() < 8) {
-//            throw new AccessTokenException(AccessTokenException.TOKEN_ERROR.UNACCEPT);
-        }
-
-        String tokenType = headerStr.substring(0, 6);
-        String tokenStr = headerStr.substring(7);
-
-        if (tokenType.equalsIgnoreCase("Bearer") == false) {
-//            throw new AccessTokenException(AccessTokenException.TOKEN_ERROR.BADTYPE);
-        }
-
-        try {
-            return jwtUtil.validateToken(tokenStr);
-        } catch (MalformedJwtException malformedJwtException) {
-            log.error("MalFormedJwtException-------------");
-//            throw new AccessTokenException((AccessTokenException.TOKEN_ERROR.MALFORM));
-        } catch (SignatureException signatureException) {
-            log.error("SignatureException-------------");
-//            throw new AccessTokenException((AccessTokenException.TOKEN_ERROR.BADSIGN));
-        } catch (ExpiredJwtException expiredJwtException) {
-            log.error("ExpiredJwtException-------------");
-//            throw new AccessTokenException((AccessTokenException.TOKEN_ERROR.EXPIRED));
+    private String extractToken(HttpServletRequest request) {
+        String bearerToken = request.getHeader("Authorization");
+        if (StringUtils.hasText(bearerToken) && bearerToken.startsWith("Bearer ")) {
+            return bearerToken.substring(7);
         }
         return null;
     }
 
-//    private void saveClaimToAuthentication(Map<String, Object> claim, HttpServletRequest request) {
-//        String token = request.getHeader("Authorization").substring(7);  // "Bearer " 제거
+//    private Map<String, Object> validateAccessToken(HttpServletRequest request) throws AccessTokenException {
+//        String headerStr = request.getHeader("Authorization");
 //
-//        // 권한 정보 생성 (예시)
-//        List<GrantedAuthority> authorities = new ArrayList<>();
-//        if (claim.containsKey("role")) {
-//            authorities.add(new SimpleGrantedAuthority("ROLE_" + claim.get("role")));
+//        if (headerStr == null || headerStr.length() < 8) {
+////            throw new AccessTokenException(AccessTokenException.TOKEN_ERROR.UNACCEPT);
 //        }
 //
-//        // JwtAuthenticationToken 생성
-//        JwtAuthenticationToken authentication = new JwtAuthenticationToken(token, claim, authorities);
+//        String tokenType = headerStr.substring(0, 6);
+//        String tokenStr = headerStr.substring(7);
 //
-//        // SecurityContext에 Authentication 설정
-//        SecurityContextHolder.getContext().setAuthentication(authentication);
+//        if (tokenType.equalsIgnoreCase("Bearer") == false) {
+////            throw new AccessTokenException(AccessTokenException.TOKEN_ERROR.BADTYPE);
+//        }
+//
+//        try {
+//            return jwtUtil.validateToken(tokenStr);
+//        } catch (MalformedJwtException malformedJwtException) {
+//            log.error("MalFormedJwtException-------------");
+////            throw new AccessTokenException((AccessTokenException.TOKEN_ERROR.MALFORM));
+//        } catch (SignatureException signatureException) {
+//            log.error("SignatureException-------------");
+////            throw new AccessTokenException((AccessTokenException.TOKEN_ERROR.BADSIGN));
+//        } catch (ExpiredJwtException expiredJwtException) {
+//            log.error("ExpiredJwtException-------------");
+////            throw new AccessTokenException((AccessTokenException.TOKEN_ERROR.EXPIRED));
+//        }
+//        return null;
 //    }
+
+
 }

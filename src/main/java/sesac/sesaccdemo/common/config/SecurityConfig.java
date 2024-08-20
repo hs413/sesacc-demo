@@ -5,9 +5,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.security.authentication.AuthenticationManager;
-import org.springframework.security.config.Customizer;
-import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
@@ -19,10 +16,7 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 import org.springframework.web.cors.CorsConfiguration;
 import org.springframework.web.cors.CorsConfigurationSource;
 import org.springframework.web.cors.UrlBasedCorsConfigurationSource;
-import sesac.sesaccdemo.auth.filter.APILoginFilter;
 import sesac.sesaccdemo.auth.filter.AccessTokenFilter;
-import sesac.sesaccdemo.auth.handler.APILoginSuccessHandler;
-import sesac.sesaccdemo.auth.service.APIUserDetailsService;
 
 import java.util.Arrays;
 
@@ -32,8 +26,6 @@ import java.util.Arrays;
 @Slf4j
 public class SecurityConfig {
     private final AccessTokenFilter accessTokenFilter;
-    private final APIUserDetailsService userDetailsService;
-    private final APILoginSuccessHandler successHandler;
 
     @Value("${origins}")
     private String origins;
@@ -47,34 +39,11 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable)
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS));
 
-        http.authorizeHttpRequests(requests -> {
-            requests.requestMatchers("/accounts/**")
-                    .permitAll();
-        });
-
-        AuthenticationManagerBuilder authenticationManagerBuilder =
-                http.getSharedObject(AuthenticationManagerBuilder.class);
-
-        authenticationManagerBuilder
-                .userDetailsService(userDetailsService);
-//                .passwordEncoder(passwordEncoder());
-
-        AuthenticationManager authenticationManager =
-                authenticationManagerBuilder.build();
-
-        http.authenticationManager(authenticationManager);
-
-        APILoginFilter apiLoginFilter = new APILoginFilter("/accounts/login");
-        apiLoginFilter.setAuthenticationManager(authenticationManager);
-
-        apiLoginFilter.setAuthenticationSuccessHandler(successHandler);
-
-        http.addFilterBefore(apiLoginFilter, UsernamePasswordAuthenticationFilter.class);
-
-//        http.addFilterBefore(
-//                AccessTokenFilter(jwtUtil, apiUserDetailsService),
-//                UsernamePasswordAuthenticationFilter.class
-//        );
+        http.authorizeHttpRequests(requests -> requests
+                .requestMatchers("/accounts/**").permitAll()
+                .requestMatchers("/manager/**").hasRole("MANAGER")
+                .anyRequest().authenticated()
+        );
 
         http.addFilterBefore(
                 accessTokenFilter,
