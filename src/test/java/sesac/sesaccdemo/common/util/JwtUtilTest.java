@@ -3,20 +3,19 @@ package sesac.sesaccdemo.common.util;
 import io.jsonwebtoken.ExpiredJwtException;
 import io.jsonwebtoken.security.SignatureException;
 import lombok.extern.log4j.Log4j2;
-import lombok.extern.slf4j.Slf4j;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import sesac.sesaccdemo.auth.util.JwtUtil;
 
 import java.util.Map;
-
-import static org.junit.jupiter.api.Assertions.*;
 
 @SpringBootTest
 @Log4j2
 class JwtUtilTest {
-    @Autowired JwtUtil jwtUtil;
+    @Autowired
+    JwtUtil jwtUtil;
 
     @Test
     public void testGenerateToken() {

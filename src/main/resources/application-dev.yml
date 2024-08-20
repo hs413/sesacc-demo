@@ -8,6 +8,11 @@ spring:
     generate-ddl: true
     hibernate:
       ddl-auto: update
+logging:
+  level:
+    org:
+      springframework:
+        security: TRACE
 
-
+jwt.secret: developmentjwtkeydmdoiwj2398usd7ayf987124gugszdc9783287gf
 origins: http://localhost:3000

@@ -1,4 +1,4 @@
-package sesac.sesaccdemo.common.util;
+package sesac.sesaccdemo.auth.util;
 
 import io.jsonwebtoken.JwtException;
 import io.jsonwebtoken.Jwts;
