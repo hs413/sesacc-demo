@@ -4,11 +4,10 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 import sesac.sesaccdemo.auth.dto.LoginRequest;
+import sesac.sesaccdemo.auth.exception.AccountErrorCode;
+import sesac.sesaccdemo.auth.exception.AccountException;
 import sesac.sesaccdemo.auth.util.JwtUtil;
 
 import java.util.HashMap;
@@ -36,5 +35,9 @@ public class AccountController {
                 .body(token);
     };
 
+    @GetMapping
+    public ResponseEntity<String> getUser() {
+        throw new AccountException(AccountErrorCode.NO);
+    }
 
 }
