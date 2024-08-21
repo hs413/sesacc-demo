@@ -31,7 +31,7 @@ public class GlobalExceptionHandler {
         int statusValue = HttpStatus.INTERNAL_SERVER_ERROR.value();
 
         ErrorResponse errorResponse =
-                new ErrorResponse(statusValue, ErrorCode.INTERNAL_SERVER_ERROR.getMessage());
+                new ErrorResponse(statusValue, GlobalErrorCode.INTERNAL_SERVER_ERROR.getMessage());
 
         log.error("서버 에러 : {}", e.getMessage(), e);
         return ResponseEntity
