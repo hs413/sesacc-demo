@@ -26,10 +26,10 @@ jobs:
         service_account_key: ${{ secrets.GCP_SA_KEY }}
 
     - name: Check JSON Key validity
-      run: echo "${{ secrets.GCP_SA_KEY }}" | jq .
+      run: echo '${{ secrets.GCP_SA_KEY }}' | jq .
         
     - name: Configure Docker
-      run: echo "${{ secrets.GCP_SA_KEY }}" | docker login -u _json_key --password-stdin https://asia-northeast3-docker.pkg.dev
+      run: echo '${{ secrets.GCP_SA_KEY }}' | docker login -u _json_key --password-stdin https://asia-northeast3-docker.pkg.dev
 
     - name: Build and Push Docker image
       run: |
