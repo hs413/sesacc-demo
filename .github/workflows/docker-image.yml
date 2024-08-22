@@ -19,14 +19,26 @@ jobs:
       packages: write
 
     steps:
+    - name: Checkout repository
+      uses: actions/checkout@v3
+
+    - name: Set up JDK 17
+      uses: actions/setup-java@v4
+      with:
+        java-version: '17'
+        distribution: 'zulu'
+
+    - name: Run chmod to make gradlew executable
+      run: chmod +x gradlew
+
+    - name: Build with Gradle
+      run: ./gradlew build -x test
+
     - name: Set up Cloud SDK
       uses: google-github-actions/setup-gcloud@v1
       with:
         project_id: ${{ env.PROJECT_ID }}
         service_account_key: ${{ secrets.GCP_SA_KEY }}
-
-    - name: Check JSON Key validity
-      run: echo '${{ secrets.GCP_SA_KEY }}' | jq .
         
     - name: Configure Docker
       run: echo '${{ secrets.GCP_SA_KEY }}' | docker login -u _json_key --password-stdin https://asia-northeast3-docker.pkg.dev
