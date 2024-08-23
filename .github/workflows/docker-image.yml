@@ -28,7 +28,7 @@ jobs:
       run: |
         echo "$PRIVATE_KEY" > private_key && chmod 400 private_key
         ssh -i private_key -o StrictHostKeyChecking=no ${USER}@${HOST} '
-          cat ${{ secrets.GCP_KEY_PATH }} |  docker login -u _json_key --password-stdin https://asia-northeast3-docker.pkg.dev
-          sudo docker pull ${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE }}:71db098bff745d188474bc899aa504b17034a399
+          cat ${{ secrets.GCP_KEY_PATH }} | docker login -u _json_key_base64 --password-stdin https://asia-northeast3-docker.pkg.dev
+          docker pull ${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE }}:71db098bff745d188474bc899aa504b17034a399
         '
  
