@@ -10,7 +10,7 @@ env:
   GAR_LOCATION: asia-northeast3
   REPOSITORY: demo
   IMAGE: sesacc
-  IMAGE_PATH: ${{ env.GAR_LOCATION }}-docker.pkg.dev/${{ env.PROJECT_ID }}/${{ env.REPOSITORY }}/${{ env.IMAGE }}:latest
+  IMAGE_PATH: asia-northeast3-docker.pkg.dev/${{ secrets.GCP_PROJECT_ID }}/demo/sesacc:latest
   
 jobs:
   build-and-push:
