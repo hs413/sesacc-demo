@@ -30,7 +30,7 @@ jobs:
         distribution: 'zulu'
 
     - name: set prod.yml
-      run: echo "${{ secrets.APPLICATION_YML }}" | base64 --decode > src/main/resources/application-prod.yml
+      run: echo "${{ secrets.APPLICATION_PROD }}" | base64 --decode > src/main/resources/application-prod.yml
 
     - name: Run chmod to make gradlew executable
       run: chmod +x gradlew
