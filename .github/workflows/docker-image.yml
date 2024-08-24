@@ -71,9 +71,8 @@ jobs:
         ssh -i private_key -o StrictHostKeyChecking=no ${USER}@${HOST} '
           cat ${{ secrets.GCP_KEY_PATH }} | docker login -u _json_key_base64 --password-stdin https://${{ env.GAR_LOCATION }}-docker.pkg.dev
           docker pull ${{ env.IMAGE_PATH }}
-          docker stop sesacc || true
-          docker rm sesacc || true
-          docker run -d --name sesacc -p 8080:8080 ${{ env.IMAGE_PATH }}
-          docker image prune -f
+          docker-compose down 
+          docker-compose up -d
+          
         '
  
