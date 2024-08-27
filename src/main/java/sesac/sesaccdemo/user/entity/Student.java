@@ -2,9 +2,12 @@ package sesac.sesaccdemo.user.entity;
 
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
+import jakarta.persistence.EntityListeners;
 import jakarta.persistence.Id;
 import jakarta.persistence.JoinColumn;
+import jakarta.persistence.JoinColumns;
 import jakarta.persistence.ManyToOne;
+import jakarta.persistence.MapsId;
 import jakarta.persistence.OneToOne;
 import jakarta.persistence.PrimaryKeyJoinColumn;
 import java.time.LocalDate;
@@ -14,6 +17,7 @@ import lombok.Builder;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import org.springframework.data.annotation.LastModifiedDate;
+import org.springframework.data.jpa.domain.support.AuditingEntityListener;
 import sesac.sesaccdemo.campus.entity.Course;
 
 @Entity
@@ -21,13 +25,15 @@ import sesac.sesaccdemo.campus.entity.Course;
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
+@EntityListeners(value = {AuditingEntityListener.class})
 public class Student {
 
     @Id
     private Long id;
 
     @OneToOne
-    @PrimaryKeyJoinColumn
+    @MapsId
+    @JoinColumn(name = "id")
     private User user;
 
     @Column(nullable = false)
