@@ -1,14 +1,44 @@
 package sesac.sesaccdemo.common.exception;
 
+import jakarta.validation.ValidationException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.stream.Collectors;
+import lombok.extern.log4j.Log4j2;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.validation.BindException;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
+import org.springframework.web.bind.annotation.ResponseStatus;
 
 @ControllerAdvice
-@Slf4j
+@Log4j2
 public class GlobalExceptionHandler {
+    @ExceptionHandler(BindException.class)
+    @ResponseStatus(HttpStatus.EXPECTATION_FAILED)
+    public ResponseEntity<ErrorResponse> handleBindException(BindException e) {
+        Map<String, String> errorMap = new HashMap<>();
+
+        if (e.hasErrors()) {
+            BindingResult bindingResult = e.getBindingResult();
+
+            bindingResult.getFieldErrors().forEach(fieldError -> {
+                errorMap.put(fieldError.getField(), fieldError.getDefaultMessage());
+            });
+        }
+        String errorMapString = errorMap.toString();
+
+        log.error("입력 에러 : {}", errorMapString);
+
+        return ResponseEntity
+                .badRequest()
+                .body(new ErrorResponse(HttpStatus.BAD_REQUEST.value(), errorMapString));
+    }
 
     // 사용자 정의 예외
     @ExceptionHandler(BaseException.class)
