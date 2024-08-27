@@ -1,4 +1,4 @@
-package sesac.sesaccdemo.auth.exception;
+package sesac.sesaccdemo.account.exception;
 
 import lombok.Getter;
 import lombok.RequiredArgsConstructor;
@@ -8,7 +8,7 @@ import sesac.sesaccdemo.common.exception.ErrorCode;
 @Getter
 @RequiredArgsConstructor
 public enum AccountErrorCode implements ErrorCode {
-    NO(HttpStatus.BAD_REQUEST, "안돼");
+    NO_COURSE(HttpStatus.BAD_REQUEST, "과정이 없습니다.");
 
     private final HttpStatus status;
     private final String message;

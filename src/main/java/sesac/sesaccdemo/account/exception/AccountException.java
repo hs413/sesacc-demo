@@ -1,4 +1,4 @@
-package sesac.sesaccdemo.auth.exception;
+package sesac.sesaccdemo.account.exception;
 
 import sesac.sesaccdemo.common.exception.BaseException;
 import sesac.sesaccdemo.common.exception.ErrorCode;
