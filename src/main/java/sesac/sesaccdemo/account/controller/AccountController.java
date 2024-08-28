@@ -38,7 +38,7 @@ public class AccountController {
     }
 
     @PostMapping("signup/check-email")
-    public ResponseEntity<Void> checkEmail(@RequestBody EmailCheckRequest request) {
+    public ResponseEntity<Void> checkEmail(@Valid @RequestBody EmailCheckRequest request) {
         accountService.emailCheck(request.email());
 
         return ResponseEntity.ok().build();
