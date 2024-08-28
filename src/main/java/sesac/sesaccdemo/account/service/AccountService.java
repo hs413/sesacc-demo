@@ -3,11 +3,13 @@ package sesac.sesaccdemo.account.service;
 import jakarta.transaction.Transactional;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
-import java.util.Date;
+import java.util.HashSet;
+import java.util.Set;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.log4j.Log4j2;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
+import org.springframework.validation.BindingResult;
 import sesac.sesaccdemo.account.dto.SignupRequest;
 import sesac.sesaccdemo.account.exception.AccountErrorCode;
 import sesac.sesaccdemo.account.exception.AccountException;
@@ -35,7 +37,11 @@ public class AccountService {
         if (exits) throw new AccountException(AccountErrorCode.DUPLICATED_EMAIL);
     }
 
-    public void saveStudent(SignupRequest signupRequest) {
+    public Student saveStudent(SignupRequest signupRequest) {
+        if (!signupRequest.password().equals(signupRequest.passwordConfirm())) {
+            throw new AccountException(AccountErrorCode.DIFFERENT_PASSWORD_CONFIRM);
+        }
+
         User user = User.builder()
                 .email(signupRequest.email())
                 .password(passwordEncoder.encode(signupRequest.password()))
@@ -61,6 +67,8 @@ public class AccountService {
                 .build();
 
         studentRepository.save(student);
+
+        return student;
     }
 
     private char genderConvert(int gender) {
