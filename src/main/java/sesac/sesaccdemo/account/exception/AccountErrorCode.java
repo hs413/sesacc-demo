@@ -15,7 +15,7 @@ public enum AccountErrorCode implements ErrorCode {
     REQUIRED_PASSWORD(HttpStatus.BAD_REQUEST, "REQUIRED_PASSWORD", "비밀번호가 입력되지 않았습니다"),
     INVALID_PASSWORD_PATTERN(HttpStatus.BAD_REQUEST, "INVALID_PASSWORD_PATTERN", "비밀번호는 8~20자 이내로 영어, 숫자, 특수문자를 포함해야 합니다"),
     REQUIRED_PASSWORD_CONFIRM(HttpStatus.BAD_REQUEST, "REQUIRED_PASSWORD_CONFIRM", "비밀번호 확인이 입력되지 않았습니다"),
-    DIFFERENT_PASSWORD_CONFIRM(HttpStatus.BAD_REQUEST, "DIFFERENT_PASSWORD_CONFIRM", "비밀번호 확인이 입력되지 않았습니다"),
+    DIFFERENT_PASSWORD_CONFIRM(HttpStatus.BAD_REQUEST, "DIFFERENT_PASSWORD_CONFIRM", "비밀번호 확인이 일치하지 않습니다"),
 
     REQUIRED_NAME(HttpStatus.BAD_REQUEST, "REQUIRED_NAME", "이름이 입력되지 않았습니다"),
     INVALID_NAME_PATTERN(HttpStatus.BAD_REQUEST, "INVALID_NAME_PATTERN", "이름은 한글만 입력 가능합니다"),

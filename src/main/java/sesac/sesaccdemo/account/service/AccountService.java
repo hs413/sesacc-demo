@@ -42,6 +42,8 @@ public class AccountService {
             throw new AccountException(AccountErrorCode.DIFFERENT_PASSWORD_CONFIRM);
         }
 
+        this.emailCheck(signupRequest.email());
+
         User user = User.builder()
                 .email(signupRequest.email())
                 .password(passwordEncoder.encode(signupRequest.password()))
