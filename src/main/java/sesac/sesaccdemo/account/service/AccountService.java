@@ -29,6 +29,12 @@ public class AccountService {
     private final CourseRepository courseRepository;
     private final PasswordEncoder passwordEncoder;
 
+    public void emailCheck(String email) {
+        boolean exits = userRepository.existsByEmail(email);
+
+        if (exits) throw new AccountException(AccountErrorCode.DUPLICATED_EMAIL);
+    }
+
     public void saveStudent(SignupRequest signupRequest) {
         User user = User.builder()
                 .email(signupRequest.email())

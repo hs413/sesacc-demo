@@ -1,6 +1,7 @@
 package sesac.sesaccdemo.account.controller;
 
 import jakarta.validation.Valid;
+import jakarta.validation.constraints.Email;
 import java.util.HashMap;
 import java.util.Map;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +14,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
+import sesac.sesaccdemo.account.dto.EmailCheckRequest;
 import sesac.sesaccdemo.account.dto.SignupRequest;
 import sesac.sesaccdemo.account.service.AccountService;
 import sesac.sesaccdemo.auth.dto.LoginRequest;
@@ -29,10 +31,17 @@ public class AccountController {
     private final AccountService accountService;
 
     @PostMapping("signup")
-    public ResponseEntity<String> signup(@Valid @RequestBody SignupRequest signupRequest) {
+    public ResponseEntity<Void> signup(@Valid @RequestBody SignupRequest signupRequest) {
         accountService.saveStudent(signupRequest);
 
-        return ResponseEntity.ok().body("회원가입 완료!");
+        return ResponseEntity.ok().build();
+    }
+
+    @PostMapping("signup/check-email")
+    public ResponseEntity<Void> checkEmail(@RequestBody EmailCheckRequest request) {
+        accountService.emailCheck(request.email());
+
+        return ResponseEntity.ok().build();
     }
 
     @PostMapping("login")
